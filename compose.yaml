@@ -1,7 +1,33 @@
-﻿services:
+services:
+  postgresql:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: tutordocs
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   tutordocs.api:
     image: tutordocs.api
     build:
       context: .
       dockerfile: TutorDocs.Api/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgresql;Database=tutordocs;Username=postgres;Password=postgres
 
+volumes:
+  postgres_data:

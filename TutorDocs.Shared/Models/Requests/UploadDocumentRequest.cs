@@ -4,7 +4,7 @@ namespace TutorDocs.Shared.Models.Requests;
 
 public class UploadDocumentRequest
 {
-    public IFormFile File { get; set; } = null!;
+    public IFormFile? File { get; set; } = null!;
     public string? Author { get; set; }
     public IReadOnlyList<string> Tags { get; set; } = [];
     public string? Notes { get; set; }
