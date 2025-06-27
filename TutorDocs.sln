@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FE7759D8-0979-45FE-A93E-CD5300E11F5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TutorDocs.Api", "TutorDocs.Api\TutorDocs.Api.csproj", "{0D3C8330-6D92-4D07-8946-B3F05336BF3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3FDC0730-F2CB-429A-80F6-1A91AB48FD9D}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TutorDocs.Shared", "TutorDocs.Shared\TutorDocs.Shared.csproj", "{E76A4177-46CD-40FE-B4CD-81864C972442}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TutorDocs.Lambda.ConvertToPdf", "TutorDocs.Lambda.ConvertToPdf\TutorDocs.Lambda.ConvertToPdf.csproj", "{D28A0FDD-A215-45B1-84AA-F317C0446A4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TutorDocs.Lambda.ChunkEmbed", "TutorDocs.Lambda.ChunkEmbed\TutorDocs.Lambda.ChunkEmbed.csproj", "{95D59062-3B81-45C1-B639-6D6F333A8303}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0D3C8330-6D92-4D07-8946-B3F05336BF3B} = {FE7759D8-0979-45FE-A93E-CD5300E11F5A}
+		{E76A4177-46CD-40FE-B4CD-81864C972442} = {FE7759D8-0979-45FE-A93E-CD5300E11F5A}
+		{D28A0FDD-A215-45B1-84AA-F317C0446A4C} = {FE7759D8-0979-45FE-A93E-CD5300E11F5A}
+		{95D59062-3B81-45C1-B639-6D6F333A8303} = {FE7759D8-0979-45FE-A93E-CD5300E11F5A}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D3C8330-6D92-4D07-8946-B3F05336BF3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D3C8330-6D92-4D07-8946-B3F05336BF3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D3C8330-6D92-4D07-8946-B3F05336BF3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D3C8330-6D92-4D07-8946-B3F05336BF3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E76A4177-46CD-40FE-B4CD-81864C972442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E76A4177-46CD-40FE-B4CD-81864C972442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E76A4177-46CD-40FE-B4CD-81864C972442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E76A4177-46CD-40FE-B4CD-81864C972442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D28A0FDD-A215-45B1-84AA-F317C0446A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D28A0FDD-A215-45B1-84AA-F317C0446A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D28A0FDD-A215-45B1-84AA-F317C0446A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D28A0FDD-A215-45B1-84AA-F317C0446A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D59062-3B81-45C1-B639-6D6F333A8303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D59062-3B81-45C1-B639-6D6F333A8303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D59062-3B81-45C1-B639-6D6F333A8303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D59062-3B81-45C1-B639-6D6F333A8303}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

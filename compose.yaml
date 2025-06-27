@@ -1,0 +1,7 @@
+﻿services:
+  tutordocs.api:
+    image: tutordocs.api
+    build:
+      context: .
+      dockerfile: TutorDocs.Api/Dockerfile
+
