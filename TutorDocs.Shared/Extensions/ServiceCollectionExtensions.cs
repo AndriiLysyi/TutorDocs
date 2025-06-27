@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TutorDocs.Shared.Data;
+using TutorDocs.Shared.Services;
 
 namespace TutorDocs.Shared.Extensions;
 
@@ -14,8 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<TutorDocsDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         
-        //services.AddScoped<IDocumentService, DocumentService>();
-
+        services.AddScoped<IDocumentService, DocumentService>();
 
         return services;
     }

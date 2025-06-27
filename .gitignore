@@ -440,6 +440,7 @@ $RECYCLE.BIN/
 # Project specific
 # Claude Code project guide - contains sensitive architecture info
 claude-code-project-guide.md
+CLAUDE.md
 
 # AWS credentials and config
 .aws/

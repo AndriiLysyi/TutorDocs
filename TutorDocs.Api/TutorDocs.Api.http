@@ -1,6 +1,51 @@
-@TutorDocs.Api_HostAddress = http://localhost:5147
+@TutorDocs_Api_HostAddress = http://localhost:5147
 
-GET {{TutorDocs.Api_HostAddress}}/weatherforecast/
+GET {{TutorDocs_Api_HostAddress}}/api/documents
 Accept: application/json
 
 ###
+
+
+GET {{TutorDocs_Api_HostAddress}}/api/test/db
+Accept: application/json
+
+###
+
+POST {{TutorDocs_Api_HostAddress}}/api/documents/upload
+Content-Type: multipart/form-data; boundary=docboundary
+Accept: application/json
+
+--docboundary
+Content-Disposition: form-data; name="File"; filename="report.pdf"
+Content-Type: application/pdf
+
+< ./report.pdf
+--docboundary
+Content-Disposition: form-data; name="Author"
+
+Jane Doe
+--docboundary
+Content-Disposition: form-data; name="DisplayTitle"
+
+Quarterly Report
+--docboundary
+Content-Disposition: form-data; name="Description"
+
+Financial results for Q1
+--docboundary
+Content-Disposition: form-data; name="Notes"
+
+Reviewed by finance team
+--docboundary
+Content-Disposition: form-data; name="Tags"
+
+finance
+--docboundary
+Content-Disposition: form-data; name="Tags"
+
+q1
+--docboundary--
+###
+
+
+
