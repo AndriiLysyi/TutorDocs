@@ -19,7 +19,7 @@ public static class DocumentEndpoints
             .Accepts<UploadDocumentRequest>("multipart/form-data")
             .DisableAntiforgery()
             .Produces<UploadDocumentResponse>(200)
-            .Produces<object>(400);
+            .Produces<UploadDocumentResponse>(400);
 
         group.MapGet("/", GetUserDocuments)
             .WithName("GetUserDocuments")
@@ -48,7 +48,11 @@ public static class DocumentEndpoints
         {
             if (request.File == null || request.File.Length == 0)
             {
-                return TypedResults.BadRequest(new { Message = "No file provided" });
+                return TypedResults.BadRequest(new UploadDocumentResponse
+                {
+                    Message = "No file provided",
+                    IsSuccess = false
+                });
             }
 
             // TODO : remove hardcoded user
