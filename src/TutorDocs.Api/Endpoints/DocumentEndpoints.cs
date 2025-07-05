@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using TutorDocs.Shared.Extensions;
 using TutorDocs.Shared.Models.Requests;
 using TutorDocs.Shared.Models.Responses;
 using TutorDocs.Shared.Services;
 
-namespace TutorDocs.Api.Extensions;
+namespace TutorDocs.Api.Endpoints;
 
 public static class DocumentEndpoints
 {
@@ -24,19 +25,19 @@ public static class DocumentEndpoints
         group.MapGet("/", GetUserDocuments)
             .WithName("GetUserDocuments")
             .WithSummary("Get all documents for the current user")
-            .Produces<IEnumerable<object>>(200);
+            .Produces<GetUserDocumentsResponse>(200);
 
         group.MapGet("/{id:guid}", GetDocument)
             .WithName("GetDocument")
             .WithSummary("Get a specific document by ID")
-            .Produces<object>(200)
-            .Produces<object>(404);
+            .Produces<GetDocumentResponse>(200)
+            .Produces<ErrorResponse>(404);
 
         group.MapDelete("/{id:guid}", DeleteDocument)
             .WithName("DeleteDocument")
             .WithSummary("Delete a document")
-            .Produces<object>(200)
-            .Produces<object>(404);
+            .Produces<DeleteDocumentResponse>(200)
+            .Produces<ErrorResponse>(404);
     }
 
     private static async Task<IResult> UploadDocument(
@@ -84,7 +85,8 @@ public static class DocumentEndpoints
             var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
             var documents = await documentService.GetUserDocumentsAsync(userId);
-            return TypedResults.Ok(documents);
+            var response = documents.MapToGetUserDocumentsResponse();
+            return TypedResults.Ok(response);
         }
         catch (Exception ex)
         {
@@ -107,10 +109,12 @@ public static class DocumentEndpoints
             
             if (document == null)
             {
-                return TypedResults.NotFound(new { Message = "Document not found or access denied" });
+                var errorResponse = ContractMapping.MapToErrorResponse("Document not found or access denied", 404);
+                return TypedResults.NotFound(errorResponse);
             }
 
-            return TypedResults.Ok(document);
+            var response = document.MapToGetDocumentResponse();
+            return TypedResults.Ok(response);
         }
         catch (Exception ex)
         {
@@ -129,14 +133,15 @@ public static class DocumentEndpoints
             // TODO : remove hardcoded user
             var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
-            var success = await documentService.DeleteDocumentAsync(id, userId);
+            var response = await documentService.DeleteDocumentAsync(id, userId);
             
-            if (!success)
+            if (!response.IsSuccess)
             {
-                return TypedResults.NotFound(new { Message = "Document not found or access denied" });
+                var errorResponse = ContractMapping.MapToErrorResponse(response.Message, 404);
+                return TypedResults.NotFound(errorResponse);
             }
 
-            return TypedResults.Ok(new { Message = "Document deleted successfully" });
+            return TypedResults.Ok(response);
         }
         catch (Exception ex)
         {

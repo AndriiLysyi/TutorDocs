@@ -1,4 +1,4 @@
-namespace TutorDocs.Shared.Models.Entities;
+namespace TutorDocs.Shared.Data.Entities;
 
 public class User
 {

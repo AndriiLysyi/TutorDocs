@@ -4,22 +4,21 @@ services:
     environment:
       POSTGRES_DB: tutordocs
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    secrets:
+      - postgres_password
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  tutordocs.api:
-    image: tutordocs.api
-    build:
-      context: .
-      dockerfile: TutorDocs.Api/Dockerfile
+  tutordocs_api:
+    image: mcr.microsoft.com/dotnet/aspnet:10.0
     ports:
       - "8080:8080"
     depends_on:
@@ -27,7 +26,24 @@ services:
         condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgresql;Database=tutordocs;Username=postgres;Password=postgres
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgresql;Database=tutordocs;Username=postgres
+    volumes:
+      - ./published:/app
+    working_dir: /app
+    command: [ "dotnet", "TutorDocs.Api.dll" ]
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
 
 volumes:
   postgres_data:

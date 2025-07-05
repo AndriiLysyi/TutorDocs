@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TutorDocs.Shared.Data;
-using TutorDocs.Shared.Models.Entities;
+using TutorDocs.Shared.Data.Entities;
 
-namespace TutorDocs.Api.Extensions;
+namespace TutorDocs.Api.Endpoints;
 
 public static class TestEndpoints
 {

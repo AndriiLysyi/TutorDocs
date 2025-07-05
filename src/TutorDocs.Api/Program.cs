@@ -1,4 +1,4 @@
-using TutorDocs.Api.Extensions;
+using TutorDocs.Api.Endpoints;
 using TutorDocs.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,5 +19,6 @@ app.UseHttpsRedirection();
 
 app.MapDocumentEndpoints();
 app.MapTestEndpoints();
+app.MapHealthCheckEndpoints();
 
 app.Run();

@@ -1,6 +1,6 @@
 using TutorDocs.Shared.Models.Enums;
 
-namespace TutorDocs.Shared.Models.Entities;
+namespace TutorDocs.Shared.Data.Entities;
 
 public class Document
 {

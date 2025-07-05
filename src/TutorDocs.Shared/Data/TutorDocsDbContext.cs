@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using TutorDocs.Shared.Models.Entities;
+using TutorDocs.Shared.Data.Entities;
 
 namespace TutorDocs.Shared.Data;
 

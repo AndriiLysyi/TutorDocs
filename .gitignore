@@ -469,3 +469,5 @@ docker-compose.local.yml
 publish/
 dist/
 build/
+secrets/
+*.txt
