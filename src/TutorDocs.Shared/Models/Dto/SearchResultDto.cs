@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Dto;
 
-public record SearchResultDto
+public sealed record SearchResultDto
 (
     Guid  DocumentId,
     Guid  ChunkId,

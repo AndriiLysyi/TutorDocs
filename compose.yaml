@@ -2,48 +2,61 @@ services:
   postgresql:
     image: postgres:15
     environment:
-      POSTGRES_DB: tutordocs
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    secrets:
-      - postgres_password
+    networks:
+      - backend_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   tutordocs_api:
-    image: mcr.microsoft.com/dotnet/aspnet:10.0
+    image: mcr.microsoft.com/dotnet/aspnet:10.0-preview
     ports:
       - "8080:8080"
     depends_on:
       postgresql:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=postgresql;Database=tutordocs;Username=postgres
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
     volumes:
       - ./published:/app
-    working_dir: /app
     command: [ "dotnet", "TutorDocs.Api.dll" ]
-    secrets:
-      - postgres_password
+    networks:
+      - frontend_network
+      - backend_network
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/api/healthcheck || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
-secrets:
-  postgres_password:
-    file: ./secrets/postgres_password.txt
+networks:
+  frontend_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
 
+  backend_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.101.0/24
 volumes:
   postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./docker-data/postgres

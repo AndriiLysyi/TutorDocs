@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Dto;
 
-public class UserDto
+public sealed record UserDto
 {
     public required Guid Id { get; set; }
     public required string Email { get; set; }

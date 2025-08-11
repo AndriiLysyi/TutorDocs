@@ -9,9 +9,10 @@ public interface IDocumentRepository
     Task<DocumentWithMetadataDto?> GetDocumentWithMetadataAsync(Guid documentId, Guid userId);
     Task<IEnumerable<DocumentWithMetadataDto>> GetUserDocumentsAsync(Guid userId);
     Task<DocumentDto?> GetDocumentByHashAsync(string fileHash);
-    Task<DocumentDto> CreateDocumentAsync(DocumentDto document);
+    DocumentDto CreateDocumentAsync(DocumentDto document);
     Task<bool> DeleteDocumentAsync(Guid documentId, Guid userId);
     Task<bool> HasDocumentOwnershipAsync(Guid documentId, Guid userId);
-    Task AddDocumentOwnershipAsync(Guid documentId, Guid userId, DocumentMetadata metadata);
+    void AddDocumentOwnershipAsync(Guid documentId, Guid userId, DocumentMetadata metadata);
     Task<bool> HasOtherOwnersAsync(Guid documentId, Guid excludeUserId);
+    Task SaveChanges();
 }

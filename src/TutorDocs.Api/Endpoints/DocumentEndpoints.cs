@@ -19,25 +19,25 @@ public static class DocumentEndpoints
             .WithSummary("Upload a document with metadata")
             .Accepts<UploadDocumentRequest>("multipart/form-data")
             .DisableAntiforgery()
-            .Produces<UploadDocumentResponse>(200)
-            .Produces<UploadDocumentResponse>(400);
+            .Produces<UploadDocumentResponse>(StatusCodes.Status200OK)
+            .Produces<UploadDocumentResponse>(StatusCodes.Status400BadRequest);
 
         group.MapGet("/", GetUserDocuments)
             .WithName("GetUserDocuments")
             .WithSummary("Get all documents for the current user")
-            .Produces<GetUserDocumentsResponse>(200);
+            .Produces<GetUserDocumentsResponse>(StatusCodes.Status200OK);
 
         group.MapGet("/{id:guid}", GetDocument)
             .WithName("GetDocument")
             .WithSummary("Get a specific document by ID")
-            .Produces<GetDocumentResponse>(200)
-            .Produces<ErrorResponse>(404);
+            .Produces<GetDocumentResponse>(StatusCodes.Status200OK)
+            .Produces<ErrorResponse>(StatusCodes.Status404NotFound);
 
         group.MapDelete("/{id:guid}", DeleteDocument)
             .WithName("DeleteDocument")
             .WithSummary("Delete a document")
-            .Produces<DeleteDocumentResponse>(200)
-            .Produces<ErrorResponse>(404);
+            .Produces<DeleteDocumentResponse>(StatusCodes.Status200OK)
+            .Produces<ErrorResponse>(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> UploadDocument(
@@ -57,7 +57,7 @@ public static class DocumentEndpoints
             }
 
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
 
             var response = await documentService.CreateDocumentAsync(request, userId);
 
@@ -82,7 +82,7 @@ public static class DocumentEndpoints
         try
         {
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
 
             var documents = await documentService.GetUserDocumentsAsync(userId);
             var response = documents.MapToGetUserDocumentsResponse();
@@ -103,7 +103,7 @@ public static class DocumentEndpoints
         try
         {
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
 
             var document = await documentService.GetDocumentAsync(id, userId);
             
@@ -131,7 +131,7 @@ public static class DocumentEndpoints
         try
         {
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
 
             var response = await documentService.DeleteDocumentAsync(id, userId);
             

@@ -2,7 +2,7 @@ using TutorDocs.Shared.Models.Enums;
 
 namespace TutorDocs.Shared.Models.Dto;
 
-public class DocumentWithMetadataDto
+public sealed record DocumentWithMetadataDto
 {
     public required Guid Id { get; set; }
     public required string OriginalFilename { get; set; }

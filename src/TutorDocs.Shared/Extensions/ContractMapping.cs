@@ -126,7 +126,7 @@ public static class ContractMapping
         {
             DocumentId = documentId,
             UserId = userId,
-            AddedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
             Metadata = new DocumentMetadata
             {
                 DisplayTitle = request.DisplayTitle ?? request.File?.FileName,
