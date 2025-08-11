@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Responses;
 
-public class ErrorResponse
+public sealed record ErrorResponse
 {
     public required string Message { get; set; }
     public string? Details { get; set; }

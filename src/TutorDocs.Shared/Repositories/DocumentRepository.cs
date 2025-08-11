@@ -26,11 +26,11 @@ public class DocumentRepository : IDocumentRepository
     public async Task<DocumentWithMetadataDto?> GetDocumentWithMetadataAsync(Guid documentId, Guid userId)
     {
         var result = await _context.Documents
+            .Where(d => d.Id == documentId)
             .Include(d => d.Owners)
             .Include(d => d.SharedWith)
             .Where(d => d.Owners.Any(o => o.UserId == userId) || 
                        d.SharedWith.Any(s => s.UserId == userId))
-            .Where(d => d.Id == documentId)
             .Select(d => new { 
                 Document = d, 
                 Owner = d.Owners.FirstOrDefault(o => o.UserId == userId)
@@ -72,7 +72,7 @@ public class DocumentRepository : IDocumentRepository
         return document?.MapToDocumentDto();
     }
 
-    public async Task<DocumentDto> CreateDocumentAsync(DocumentDto documentDto)
+    public DocumentDto CreateDocumentAsync(DocumentDto documentDto)
     {
         var document = new Document
         {
@@ -85,8 +85,6 @@ public class DocumentRepository : IDocumentRepository
         };
 
         _context.Documents.Add(document);
-        await _context.SaveChangesAsync();
-
         return document.MapToDocumentDto();
     }
 
@@ -98,10 +96,7 @@ public class DocumentRepository : IDocumentRepository
         if (documentOwner == null)
             return false;
 
-        _context.DocumentOwners.Remove(documentOwner);
-
         var hasOtherOwners = await HasOtherOwnersAsync(documentId, userId);
-
         if (!hasOtherOwners)
         {
             var document = await _context.Documents.FindAsync(documentId);
@@ -110,8 +105,11 @@ public class DocumentRepository : IDocumentRepository
                 _context.Documents.Remove(document);
             }
         }
-
-        await _context.SaveChangesAsync();
+        else
+        {
+            _context.DocumentOwners.Remove(documentOwner);
+            await RevokeSharedAccess(documentId, userId); 
+        }
         return true;
     }
 
@@ -121,17 +119,21 @@ public class DocumentRepository : IDocumentRepository
             .AnyAsync(docOwner => docOwner.DocumentId == documentId && docOwner.UserId == userId);
     }
 
-    public async Task AddDocumentOwnershipAsync(Guid documentId, Guid userId, DocumentMetadata metadata)
+    public void AddDocumentOwnershipAsync(Guid documentId, Guid userId, DocumentMetadata metadata)
     {
         var documentOwner = new DocumentOwner
         {
             DocumentId = documentId,
             UserId = userId,
             Metadata = metadata,
-            AddedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow
         };
 
         _context.DocumentOwners.Add(documentOwner);
+    }
+    
+    public async Task SaveChanges()
+    {
         await _context.SaveChangesAsync();
     }
 
@@ -139,5 +141,16 @@ public class DocumentRepository : IDocumentRepository
     {
         return await _context.DocumentOwners
             .AnyAsync(docOwner => docOwner.DocumentId == documentId && docOwner.UserId != excludeUserId);
+    }
+    
+    public async Task RevokeSharedAccess(Guid documentId, Guid sharedByUserId)
+    {
+        var itemsToRemove= await _context.AccessControlLists
+            .Where(access => access.DocumentId == documentId && access.SharedBy == sharedByUserId)
+            .ToListAsync();
+        if (itemsToRemove.Count != 0)
+        {
+            _context.AccessControlLists.RemoveRange(itemsToRemove);
+        }
     }
 }

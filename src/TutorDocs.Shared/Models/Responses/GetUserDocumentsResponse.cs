@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Responses;
 
-public class GetUserDocumentsResponse
+public sealed record GetUserDocumentsResponse
 {
     public required IEnumerable<DocumentResponse> Documents { get; set; } = [];
 }

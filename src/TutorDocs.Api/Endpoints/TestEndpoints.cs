@@ -15,14 +15,14 @@ public static class TestEndpoints
         group.MapGet("/db", TestDatabaseConnection)
             .WithName("TestDatabaseConnection")
             .WithSummary("Test database connectivity and get basic stats")
-            .Produces<object>(200)
-            .Produces<object>(500);
+            .Produces<object>(StatusCodes.Status200OK)
+            .Produces<object>(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/user", TestCreateUser)
             .WithName("TestCreateUser")
             .WithSummary("Create a test user to verify database operations")
-            .Produces<object>(200)
-            .Produces<object>(500);
+            .Produces<object>(StatusCodes.Status200OK)
+            .Produces<object>(StatusCodes.Status500InternalServerError);
     }
 
     private static async Task<IResult> TestDatabaseConnection(

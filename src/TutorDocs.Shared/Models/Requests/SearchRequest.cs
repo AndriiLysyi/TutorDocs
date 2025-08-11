@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Requests;
 
-public class SearchRequest
+public sealed record SearchRequest
 {
     public string Query  { get; init; } = "";
 }

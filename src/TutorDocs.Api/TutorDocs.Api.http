@@ -11,6 +11,11 @@ Accept: application/json
 
 ###
 
+POST {{TutorDocs_Api_HostAddress}}/api/test/user
+Accept: application/json
+
+###
+
 POST {{TutorDocs_Api_HostAddress}}/api/documents/upload
 Content-Type: multipart/form-data; boundary=docboundary
 Accept: application/json
@@ -37,13 +42,17 @@ Content-Disposition: form-data; name="Notes"
 
 Reviewed by finance team
 --docboundary
-Content-Disposition: form-data; name="Tags"
+Content-Disposition: form-data; name="Tags[0]"
 
 finance
 --docboundary
-Content-Disposition: form-data; name="Tags"
+Content-Disposition: form-data; name="Tags[1]"
 
 q1
+--docboundary
+Content-Disposition: form-data; name="Tags[2]"
+
+report
 --docboundary--
 ###
 

@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Dto;
 
-public record ChunkOverviewDto
+public sealed record ChunkOverviewDto
 (
     Guid ChunkId,
     int  TokenStart,

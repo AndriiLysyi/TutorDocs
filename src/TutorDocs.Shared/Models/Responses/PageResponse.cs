@@ -2,7 +2,7 @@ using TutorDocs.Shared.Models.Dto;
 
 namespace TutorDocs.Shared.Models.Responses;
 
-public class PageResponse
+public sealed record PageResponse
 {
     public Guid DocumentId { get; init; }
     public int  PageNumber { get; init; }

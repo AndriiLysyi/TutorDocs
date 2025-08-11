@@ -1,7 +1,7 @@
 using TutorDocs.Shared.Models.Enums;
 
 namespace TutorDocs.Shared.Models.Responses;
-public class DocumentResponse
+public sealed record DocumentResponse
 {
     public required Guid Id { get; set; }
     

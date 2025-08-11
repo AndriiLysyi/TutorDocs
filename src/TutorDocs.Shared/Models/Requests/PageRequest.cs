@@ -1,6 +1,6 @@
 namespace TutorDocs.Shared.Models.Requests;
 
-public class PageRequest
+public sealed record PageRequest
 {
     public Guid DocumentId { get; init; }
 

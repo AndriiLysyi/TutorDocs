@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace TutorDocs.Shared.Models.Requests;
 
-public class UploadDocumentRequest
+public sealed record UploadDocumentRequest
 {
     public IFormFile? File { get; set; } = null!;
     public string? Author { get; set; }

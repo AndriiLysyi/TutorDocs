@@ -2,7 +2,7 @@ using TutorDocs.Shared.Models.Enums;
 
 namespace TutorDocs.Shared.Models.Responses;
 
-public class GetDocumentResponse
+public sealed record GetDocumentResponse
 {
     public required Guid Id { get; set; }
     public required string OriginalFilename { get; set; }
