@@ -20,8 +20,21 @@ public static class ContractMapping
             UpdatedAt = entity.UpdatedAt
         };
     }
+    
+    public static DocumentDto MapToDocumentDto(this UploadDocumentRequest entity, string fileHash)
+    {
+        return new DocumentDto
+        {
+            Id = Guid.NewGuid(),
+            OriginalFilename = entity.File.FileName,
+            FileHash = fileHash,
+            Status = DocumentStatus.Pending,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+    }
 
-    public static DocumentWithMetadataDto MapToDocumentWithMetadataDto(this Document entity, DocumentOwner owner)
+    public static DocumentWithMetadataDto MapToDocumentWithMetadataDto(this Document entity, DocumentOwner owner, bool isOwner)
     {
         return new DocumentWithMetadataDto
         {
@@ -36,26 +49,7 @@ public static class ContractMapping
             Author = owner.Metadata.Author,
             Tags = owner.Metadata.Tags,
             Notes = owner.Metadata.Notes,
-            IsOwner = true
-        };
-    }
-
-    public static DocumentWithMetadataDto MapToDocumentWithMetadataDto(this Document entity)
-    {
-        return new DocumentWithMetadataDto
-        {
-            Id = entity.Id,
-            OriginalFilename = entity.OriginalFilename,
-            FileHash = entity.FileHash,
-            Status = entity.Status,
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt,
-            DisplayTitle = entity.OriginalFilename,
-            Description = null,
-            Author = null,
-            Tags = [],
-            Notes = null,
-            IsOwner = false
+            IsOwner = isOwner,
         };
     }
 
@@ -113,7 +107,7 @@ public static class ContractMapping
         return new Document
         {
             Id = Guid.NewGuid(),
-            OriginalFilename = request.File?.FileName ?? string.Empty,
+            OriginalFilename = request.File.FileName,
             Status = DocumentStatus.Pending,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -129,7 +123,7 @@ public static class ContractMapping
             CreatedAt = DateTime.UtcNow,
             Metadata = new DocumentMetadata
             {
-                DisplayTitle = request.DisplayTitle ?? request.File?.FileName,
+                DisplayTitle = request.DisplayTitle ?? request.File.FileName,
                 Description = request.Description,
                 Author = request.Author,
                 Tags = request.Tags.ToList(),
