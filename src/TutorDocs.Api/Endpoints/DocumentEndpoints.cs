@@ -57,7 +57,7 @@ public static class DocumentEndpoints
             }
 
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
+            var userId = Guid.Parse("a536b582-7d6c-4b75-9519-8755bf49a447");
 
             var response = await documentService.CreateDocumentAsync(request, userId);
 
@@ -82,7 +82,7 @@ public static class DocumentEndpoints
         try
         {
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
+            var userId = Guid.Parse("a536b582-7d6c-4b75-9519-8755bf49a447");
 
             var documents = await documentService.GetUserDocumentsAsync(userId);
             var response = documents.MapToGetUserDocumentsResponse();
@@ -103,7 +103,7 @@ public static class DocumentEndpoints
         try
         {
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
+            var userId = Guid.Parse("a536b582-7d6c-4b75-9519-8755bf49a447");
 
             var document = await documentService.GetDocumentAsync(id, userId);
             
@@ -131,7 +131,7 @@ public static class DocumentEndpoints
         try
         {
             // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
+            var userId = Guid.Parse("a536b582-7d6c-4b75-9519-8755bf49a447");
 
             var response = await documentService.DeleteDocumentAsync(id, userId);
             

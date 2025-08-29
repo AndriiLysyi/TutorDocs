@@ -13,6 +13,5 @@ public interface IDocumentRepository
     Task<bool> DeleteDocumentAsync(Guid documentId, Guid userId);
     Task<bool> HasDocumentOwnershipAsync(Guid documentId, Guid userId);
     void AddDocumentOwnershipAsync(Guid documentId, Guid userId, DocumentMetadata metadata);
-    Task<bool> HasOtherOwnersAsync(Guid documentId, Guid excludeUserId);
     Task SaveChanges();
 }

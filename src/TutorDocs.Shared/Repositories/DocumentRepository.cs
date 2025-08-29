@@ -127,7 +127,7 @@ public class DocumentRepository : IDocumentRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> HasOtherOwnersAsync(Guid documentId, Guid excludeUserId)
+    private async Task<bool> HasOtherOwnersAsync(Guid documentId, Guid excludeUserId)
     {
         return await _context.DocumentOwners
             .AnyAsync(docOwner => docOwner.DocumentId == documentId && docOwner.UserId != excludeUserId);

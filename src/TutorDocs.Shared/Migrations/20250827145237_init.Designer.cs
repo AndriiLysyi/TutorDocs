@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TutorDocs.Shared.Data;
@@ -11,9 +12,11 @@ using TutorDocs.Shared.Data;
 namespace TutorDocs.Shared.Migrations
 {
     [DbContext(typeof(TutorDocsDbContext))]
-    partial class TutorDocsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250827145237_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
