@@ -2,8 +2,8 @@ namespace TutorDocs.Shared.Models.Responses;
 
 public sealed record UploadDocumentResponse
 {
-    public Guid DocumentId { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public bool IsSuccess { get; set; }
-    public bool WasExistingFile { get; set; }
+    public Guid DocumentId { get; init; }
+    public string Message { get; init; } = string.Empty;
+    public bool IsSuccess { get; init; }
+    public bool WasExistingFile { get; init; }
 }

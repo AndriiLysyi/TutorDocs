@@ -4,55 +4,50 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - backend_network
 
   tutordocs_api:
-    image: mcr.microsoft.com/dotnet/aspnet:10.0-preview
-    ports:
-      - "8080:8080"
-    depends_on:
-      postgresql:
-        condition: service_healthy
+    build:
+      context: ./src
+      dockerfile: ./TutorDocs.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
-    volumes:
-      - ./published:/app
-    command: [ "dotnet", "TutorDocs.Api.dll" ]
-    networks:
-      - frontend_network
-      - backend_network
+    depends_on:
+      postgresql:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8080/healthz || exit 1" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+    ports:
+      - "8080:8080"
+    networks:
+      - frontend_network
+      - backend_network
 
+ 
 networks:
   frontend_network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.100.0/24
 
   backend_network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.101.0/24
+
 volumes:
   postgres_data:
     driver: local

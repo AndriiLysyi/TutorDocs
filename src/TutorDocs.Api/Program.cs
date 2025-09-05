@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddTutorDocsShared(builder.Configuration);
 builder.Services.AddHealthChecks()
-    .AddCheck<TutorDocsHealthCheck>("tutordocs");
+    .AddCheck<TutorDocsPostgresHealthCheck>("postgresHealthCheck");
 
 var app = builder.Build();
 
@@ -27,13 +27,10 @@ if (app.Environment.IsDevelopment())
 }
 app.MapHealthChecks("/healthz");
 app.MapDocumentEndpoints();
-app.MapTestEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<TutorDocsDbContext>();
-    await context.Database.MigrateAsync();
+    app.MapTestEndpoints();
 }
 
 app.Run();

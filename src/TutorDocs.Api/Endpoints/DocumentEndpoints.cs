@@ -43,6 +43,7 @@ public static class DocumentEndpoints
     private static async Task<IResult> UploadDocument(
         [FromForm] UploadDocumentRequest request,
         IDocumentService documentService,
+        IUserProvider userProvider,
         ILogger<Program> logger)
     {
         try
@@ -56,17 +57,12 @@ public static class DocumentEndpoints
                 });
             }
 
-            // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
-
+            var userId = await userProvider.GetCurrentUserIdAsync();
             var response = await documentService.CreateDocumentAsync(request, userId);
 
-            if (response.IsSuccess)
-            {
-                return TypedResults.Ok(response);
-            }
-
-            return TypedResults.BadRequest(response);
+            return response.IsSuccess 
+                ? TypedResults.Ok(response) 
+                : TypedResults.BadRequest(response);
         }
         catch (Exception ex)
         {
@@ -77,13 +73,12 @@ public static class DocumentEndpoints
 
     private static async Task<IResult> GetUserDocuments(
         IDocumentService documentService,
+        IUserProvider userProvider,
         ILogger<Program> logger)
     {
         try
         {
-            // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
-
+            var userId = await userProvider.GetCurrentUserIdAsync();
             var documents = await documentService.GetUserDocumentsAsync(userId);
             var response = documents.MapToGetUserDocumentsResponse();
             return TypedResults.Ok(response);
@@ -98,13 +93,12 @@ public static class DocumentEndpoints
     private static async Task<IResult> GetDocument(
         Guid id,
         IDocumentService documentService,
+        IUserProvider userProvider,
         ILogger<Program> logger)
     {
         try
         {
-            // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
-
+            var userId = await userProvider.GetCurrentUserIdAsync();
             var document = await documentService.GetDocumentAsync(id, userId);
             
             if (document == null)
@@ -126,13 +120,12 @@ public static class DocumentEndpoints
     private static async Task<IResult> DeleteDocument(
         Guid id,
         IDocumentService documentService,
+        IUserProvider userProvider,
         ILogger<Program> logger)
     {
         try
         {
-            // TODO : remove hardcoded user
-            var userId = Guid.Parse("53e2d90f-553d-472f-98fb-d8d9b2b7c273");
-
+            var userId = await userProvider.GetCurrentUserIdAsync();
             var response = await documentService.DeleteDocumentAsync(id, userId);
             
             if (!response.IsSuccess)

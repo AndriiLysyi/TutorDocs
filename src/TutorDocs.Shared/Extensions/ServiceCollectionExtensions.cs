@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         
         services.AddScoped<IDocumentService, DocumentService>();
         services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<IUserProvider, UserProvider>();
 
         return services;
     }

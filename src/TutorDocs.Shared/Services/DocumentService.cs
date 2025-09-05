@@ -26,7 +26,7 @@ public class DocumentService : IDocumentService
             await using var stream = request.File?.OpenReadStream();
             var fileHash = await ComputeFileHashAsync(stream!);
             
-            var existingDocument = await _documentRepository.GetDocumentByHashAsync(fileHash);
+            var existingDocument = await _documentRepository.GetDocumentByHash(fileHash);
 
             if (existingDocument != null)
             {
@@ -35,40 +35,33 @@ public class DocumentService : IDocumentService
             
             var createdDocumentId = await CreateDocumentInternal(request, fileHash, userId);
 
-            return new UploadDocumentResponse
-            {
-                DocumentId = createdDocumentId,
-                Message = "Document uploaded successfully",
-                IsSuccess = true,
-                WasExistingFile = false
-            };
+            return ContractMapping.MapToUploadDocumentResponse(createdDocumentId, 
+                "Document uploaded successfully", 
+                false);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating document for user {UserId}", userId);
-            return new UploadDocumentResponse
-            {
-                DocumentId = Guid.Empty,
-                Message = "Error uploading document",
-                IsSuccess = false,
-                WasExistingFile = false
-            };
+            return ContractMapping.MapToUploadDocumentResponse(Guid.Empty,
+                "Error uploading document",
+                false,
+                false);
         }
     }
 
     public async Task<DocumentWithMetadataDto?> GetDocumentAsync(Guid documentId, Guid userId)
     {
-        return await _documentRepository.GetDocumentWithMetadataAsync(documentId, userId);
+        return await _documentRepository.GetDocumentWithMetadata(documentId, userId);
     }
 
     public async Task<IEnumerable<DocumentWithMetadataDto>> GetUserDocumentsAsync(Guid userId)
     {
-        return await _documentRepository.GetUserDocumentsAsync(userId);
+        return await _documentRepository.GetUserDocuments(userId);
     }
 
     public async Task<DeleteDocumentResponse> DeleteDocumentAsync(Guid documentId, Guid userId)
     {
-        var success = await _documentRepository.DeleteDocumentAsync(documentId, userId);
+        var success = await _documentRepository.DeleteDocument(documentId, userId);
         if (success)
         {
             await _documentRepository.SaveChanges();    
@@ -88,42 +81,37 @@ public class DocumentService : IDocumentService
 
     private async Task<UploadDocumentResponse> AddOwnerAsync(UploadDocumentRequest request, Guid id, Guid userId)
     {
-        var hasOwnership = await _documentRepository.HasDocumentOwnershipAsync(id, userId);
+        await _documentRepository.BeginTransaction();
+        var hasOwnership = await _documentRepository.HasDocumentOwnership(id, userId);
 
         if (hasOwnership)
         {
-            return new UploadDocumentResponse
-            {
-                DocumentId = id,
-                Message = "Document already exists in your library",
-                IsSuccess = true,
-                WasExistingFile = true
-            };
+            return ContractMapping.MapToUploadDocumentResponse(id, 
+                "Document already exists in your library", 
+                true);
         }
                 
         var metadata = request.MapToDocumentOwner(id, userId).Metadata;
-        _documentRepository.AddDocumentOwnershipAsync(id, userId, metadata);
+        _documentRepository.AddDocumentOwnership(id, userId, metadata);
         await _documentRepository.SaveChanges();
-        
-        return new UploadDocumentResponse
-        {
-            DocumentId = id,
-            Message = "Document added to your library",
-            IsSuccess = true,
-            WasExistingFile = true
-        };
+        await _documentRepository.CommitTransaction();
+
+        return ContractMapping.MapToUploadDocumentResponse(id, 
+            "Document added to your library", 
+            true);
     }
     
     private async Task<Guid> CreateDocumentInternal(UploadDocumentRequest request, string fileHash, Guid userId)
     {
-        var documentDto = request!.MapToDocument().MapToDocumentDto();
-        documentDto.FileHash = fileHash;
-            
-        var createdDocument = _documentRepository.CreateDocumentAsync(documentDto);
+        var documentDto = request.MapToDocumentDto(fileHash);
+        
+        await _documentRepository.BeginTransaction();
+        var createdDocument = _documentRepository.CreateDocument(documentDto);
             
         var ownerMetadata = request.MapToDocumentOwner(createdDocument.Id, userId).Metadata;
-        _documentRepository.AddDocumentOwnershipAsync(createdDocument.Id, userId, ownerMetadata);
+        _documentRepository.AddDocumentOwnership(createdDocument.Id, userId, ownerMetadata);
         await _documentRepository.SaveChanges();
+        await _documentRepository.CommitTransaction();
         
         _logger.LogInformation("Document {DocumentId} created successfully for user {UserId}", createdDocument.Id, userId);
         
