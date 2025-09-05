@@ -3,15 +3,14 @@ using TutorDocs.Shared.Models.Dto;
 
 namespace TutorDocs.Shared.Repositories;
 
-public interface IDocumentRepository
+public interface IDocumentRepository : IBaseRepository
 {
     Task<DocumentDto?> GetDocumentByIdAsync(Guid documentId);
-    Task<DocumentWithMetadataDto?> GetDocumentWithMetadataAsync(Guid documentId, Guid userId);
-    Task<IEnumerable<DocumentWithMetadataDto>> GetUserDocumentsAsync(Guid userId);
-    Task<DocumentDto?> GetDocumentByHashAsync(string fileHash);
-    DocumentDto CreateDocumentAsync(DocumentDto document);
-    Task<bool> DeleteDocumentAsync(Guid documentId, Guid userId);
-    Task<bool> HasDocumentOwnershipAsync(Guid documentId, Guid userId);
-    void AddDocumentOwnershipAsync(Guid documentId, Guid userId, DocumentMetadata metadata);
-    Task SaveChanges();
+    Task<DocumentWithMetadataDto?> GetDocumentWithMetadata(Guid documentId, Guid userId);
+    Task<IEnumerable<DocumentWithMetadataDto>> GetUserDocuments(Guid userId);
+    Task<DocumentDto?> GetDocumentByHash(string fileHash);
+    DocumentDto CreateDocument(DocumentDto document);
+    Task<bool> DeleteDocument(Guid documentId, Guid userId);
+    Task<bool> HasDocumentOwnership(Guid documentId, Guid userId);
+    void AddDocumentOwnership(Guid documentId, Guid userId, DocumentMetadata metadata);
 }

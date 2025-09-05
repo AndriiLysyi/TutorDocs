@@ -160,4 +160,29 @@ public static class ContractMapping
             Details = details
         };
     }
+    
+    public static Document MapToDocument(this DocumentDto documentDto)
+    {
+        return new Document
+        {
+            Id = documentDto.Id,
+            OriginalFilename = documentDto.OriginalFilename,
+            FileHash = documentDto.FileHash,
+            Status = documentDto.Status,
+            CreatedAt = documentDto.CreatedAt,
+            UpdatedAt = documentDto.UpdatedAt
+        };
+    }
+    
+    public static UploadDocumentResponse MapToUploadDocumentResponse(Guid documentId, string message, bool wasExistingFile,
+        bool isSuccess = true)
+    {
+        return new UploadDocumentResponse
+        {
+            DocumentId = documentId,
+            Message = message,
+            IsSuccess = isSuccess,
+            WasExistingFile = wasExistingFile
+        };
+    }
 }
