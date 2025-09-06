@@ -370,13 +370,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Docker
-.dockerignore
-
-# Entity Framework
-**/Migrations/*
-!**/Migrations/.gitkeep
-
 # Environment variables
 .env
 .env.local
@@ -464,8 +457,3 @@ docker-compose.local.yml
 *.suo
 *.user
 *.sln.docstates
-
-# Build outputs that shouldn't be committed
-publish/
-dist/
-build/
