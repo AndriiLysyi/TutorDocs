@@ -1,4 +1,8 @@
-@TutorDocs_Api_HostAddress = http://localhost:5147
+//@TutorDocs_Api_HostAddress = http://localhost:5147
+@TutorDocs_Api_HostAddress = http://localhost:8080
+
+### Variables - Replace with actual document ID
+@documentId = b4e3dfb2-13f7-46e5-b199-5a9e660f67f4
 
 GET {{TutorDocs_Api_HostAddress}}/api/documents
 Accept: application/json
@@ -21,10 +25,10 @@ Content-Type: multipart/form-data; boundary=docboundary
 Accept: application/json
 
 --docboundary
-Content-Disposition: form-data; name="File"; filename="report.pdf"
+Content-Disposition: form-data; name="File"; filename="report1.pdf"
 Content-Type: application/pdf
 
-< ../../docker-data/report.pdf
+< ../../docker-data/report1.pdf
 --docboundary
 Content-Disposition: form-data; name="Author"
 
@@ -54,6 +58,48 @@ Content-Disposition: form-data; name="Tags[2]"
 
 report
 --docboundary--
+
+###
+
+### Get Document by ID
+GET {{TutorDocs_Api_HostAddress}}/api/documents/{{documentId}}
+Accept: application/json
+
+###
+
+### Get Document Presigned Download URL  
+GET {{TutorDocs_Api_HostAddress}}/api/documents/{{documentId}}/download-url
+Accept: text/plain
+
+###
+
+### Get Document Presigned Download URL with Custom Expiration (2 hours)
+GET {{TutorDocs_Api_HostAddress}}/api/documents/{{documentId}}/download-url?expirationHours=2
+Accept: text/plain
+
+###
+
+### Download Document as Stream
+GET {{TutorDocs_Api_HostAddress}}/api/documents/{{documentId}}/stream
+Accept: application/octet-stream
+
+###
+
+### Delete Document  
+DELETE {{TutorDocs_Api_HostAddress}}/api/documents/{{documentId}}
+Accept: application/json
+
+###
+
+### Health Check
+GET {{TutorDocs_Api_HostAddress}}/healthz
+
+###
+
+### Detailed Health Check
+GET {{TutorDocs_Api_HostAddress}}/healthz/ready
+Accept: application/json
+
 ###
 
 

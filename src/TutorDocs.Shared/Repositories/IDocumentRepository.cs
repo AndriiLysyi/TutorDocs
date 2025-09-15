@@ -3,7 +3,7 @@ using TutorDocs.Shared.Models.Dto;
 
 namespace TutorDocs.Shared.Repositories;
 
-public interface IDocumentRepository : IBaseRepository
+public interface IDocumentRepository
 {
     Task<DocumentDto?> GetDocumentByIdAsync(Guid documentId);
     Task<DocumentWithMetadataDto?> GetDocumentWithMetadata(Guid documentId, Guid userId);
