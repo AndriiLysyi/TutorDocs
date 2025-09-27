@@ -28,14 +28,11 @@ public class LocalStackHealthCheck : IHealthCheck
     {
         try
         {
-            // Use a timeout for the health check to prevent hanging
             using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            timeoutCts.CancelAfter(TimeSpan.FromSeconds(5)); // 5 second timeout
+            timeoutCts.CancelAfter(TimeSpan.FromSeconds(5));
             
-            // Check if we can list buckets (basic connectivity test)
             var bucketsResponse = await _s3Client.ListBucketsAsync(timeoutCts.Token);
             
-            // Check if our specific bucket exists
             var bucketExists = bucketsResponse.Buckets.Any(b => b.BucketName == _bucketName);
             
             if (!bucketExists)
@@ -43,8 +40,7 @@ public class LocalStackHealthCheck : IHealthCheck
                 _logger.LogWarning("LocalStack S3 is accessible but bucket '{BucketName}' does not exist", _bucketName);
                 return HealthCheckResult.Degraded($"LocalStack S3 accessible but bucket '{_bucketName}' missing");
             }
-
-            // Perform a simple operation to verify full functionality
+            
             var headRequest = new GetBucketLocationRequest
             {
                 BucketName = _bucketName
