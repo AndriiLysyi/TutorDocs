@@ -6,10 +6,13 @@ using TutorDocs.Shared.Models.Dto;
 
 namespace TutorDocs.Shared.Repositories;
 
-public class DocumentRepository : BaseRepository, IDocumentRepository
+public class DocumentRepository : IDocumentRepository
 {
-    public DocumentRepository(TutorDocsDbContext context) : base(context)
+    private readonly TutorDocsDbContext _context;
+
+    public DocumentRepository(TutorDocsDbContext context)
     {
+        _context = context;
     }
 
     public async Task<DocumentDto?> GetDocumentByIdAsync(Guid documentId)

@@ -1,16 +1,25 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using TutorDocs.Shared.Data;
+using TutorDocs.Shared.Repositories;
 
-namespace TutorDocs.Shared.Repositories;
+namespace TutorDocs.Shared.Services;
 
-public abstract class BaseRepository : IBaseRepository
+public class UnitOfWork : IUnitOfWork
 {
-    protected readonly TutorDocsDbContext _context;
+    private readonly TutorDocsDbContext _context;
     private IDbContextTransaction? _currentTransaction;
+    private IDocumentRepository? _documentRepository;
+    private bool _disposed = false;
 
-    protected BaseRepository(TutorDocsDbContext context)
+    public UnitOfWork(TutorDocsDbContext context)
     {
         _context = context;
+    }
+
+    public IDocumentRepository DocumentRepository 
+    { 
+        get { return _documentRepository ??= new DocumentRepository(_context); } 
     }
 
     public async Task SaveChanges()
@@ -61,6 +70,20 @@ public abstract class BaseRepository : IBaseRepository
         {
             await _currentTransaction.DisposeAsync();
             _currentTransaction = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            if (_currentTransaction != null)
+            {
+                _currentTransaction.Dispose();
+                _currentTransaction = null;
+            }
+
+            _disposed = true;
         }
     }
 }

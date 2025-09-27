@@ -17,6 +17,27 @@ services:
     networks:
       - backend_network
 
+  localstack:
+    image: localstack/localstack
+    environment:
+      - SERVICES=${LOCALSTACK_SERVICES}
+      - DEBUG=1
+      - DATA_DIR=/var/lib/localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - ./docker-data/localstack:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: [ "CMD", "curl", "-s", "http://localhost:4566/_localstack/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "4566:4566"
+    networks:
+      - backend_network
+      - frontend_network
+
   tutordocs_api:
     build:
       context: ./src
@@ -25,6 +46,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - AWS__ServiceURL=${AWS__ServiceURL}
+      - AWS__AccessKey=${AWS__AccessKey}
+      - AWS__SecretKey=${AWS__SecretKey}
+      - AWS__BucketName=${AWS__BucketName}
+      - AWS__Region=${AWS__Region}
     depends_on:
       postgresql:
         condition: service_healthy

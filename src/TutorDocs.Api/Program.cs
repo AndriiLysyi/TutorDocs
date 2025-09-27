@@ -11,8 +11,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddTutorDocsShared(builder.Configuration);
-builder.Services.AddHealthChecks()
-    .AddCheck<TutorDocsPostgresHealthCheck>("postgresHealthCheck");
 
 var app = builder.Build();
 
@@ -26,6 +24,29 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.MapHealthChecks("/healthz");
+app.MapHealthChecks("/healthz/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = async (context, report) =>
+    {
+        var response = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                exception = entry.Value.Exception?.Message,
+                duration = entry.Value.Duration.ToString(),
+                data = entry.Value.Data
+            }),
+            totalDuration = report.TotalDuration.ToString()
+        };
+        
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
+    }
+});
 app.MapDocumentEndpoints();
 
 if (app.Environment.IsDevelopment())

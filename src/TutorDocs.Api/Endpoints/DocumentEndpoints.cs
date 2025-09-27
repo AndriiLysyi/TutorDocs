@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TutorDocs.Shared.Extensions;
 using TutorDocs.Shared.Models.Requests;
@@ -37,6 +38,18 @@ public static class DocumentEndpoints
             .WithName("DeleteDocument")
             .WithSummary("Delete a document")
             .Produces<DeleteDocumentResponse>(StatusCodes.Status200OK)
+            .Produces<ErrorResponse>(StatusCodes.Status404NotFound);
+
+        group.MapGet("/{id:guid}/download-url", GetDocumentDownloadUrl)
+            .WithName("GetDocumentDownloadUrl")
+            .WithSummary("Get a presigned URL to download a document")
+            .Produces<string>(StatusCodes.Status200OK, "text/plain")
+            .Produces<ErrorResponse>(StatusCodes.Status404NotFound);
+
+        group.MapGet("/{id:guid}/stream", GetDocumentStream)
+            .WithName("GetDocumentStream")
+            .WithSummary("Download document as stream")
+            .Produces<FileStreamHttpResult>(StatusCodes.Status200OK, "application/octet-stream")
             .Produces<ErrorResponse>(StatusCodes.Status404NotFound);
     }
 
@@ -139,6 +152,69 @@ public static class DocumentEndpoints
         catch (Exception ex)
         {
             logger.LogError(ex, "Error deleting document {DocumentId}", id);
+            return TypedResults.Problem("Internal server error", statusCode: 500);
+        }
+    }
+
+    private static async Task<IResult> GetDocumentDownloadUrl(
+        Guid id,
+        IDocumentService documentService,
+        IUserProvider userProvider,
+        ILogger<Program> logger,
+        int expirationHours = 1)
+    {
+        try
+        {
+            var userId = await userProvider.GetCurrentUserIdAsync();
+            var expiration = TimeSpan.FromHours(expirationHours);
+            var downloadUrl = await documentService.GetDocumentDownloadUrl(id, userId, expiration);
+            
+            return TypedResults.Ok(downloadUrl);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            var errorResponse = ContractMapping.MapToErrorResponse("Document not found or access denied", 404);
+            return TypedResults.NotFound(errorResponse);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error generating download URL for document {DocumentId}", id);
+            return TypedResults.Problem("Internal server error", statusCode: 500);
+        }
+    }
+
+    private static async Task<IResult> GetDocumentStream(
+        Guid id,
+        IDocumentService documentService,
+        IUserProvider userProvider,
+        ILogger<Program> logger)
+    {
+        try
+        {
+            var userId = await userProvider.GetCurrentUserIdAsync();
+            
+            // Get document metadata first to get the original filename
+            var documentMetadata = await documentService.GetDocumentAsync(id, userId);
+            if (documentMetadata == null)
+            {
+                var errorResponse = ContractMapping.MapToErrorResponse("Document not found or access denied", 404);
+                return TypedResults.NotFound(errorResponse);
+            }
+
+            var stream = await documentService.GetDocumentStream(id, userId);
+            var contentType = "application/octet-stream";
+            var fileName = documentMetadata.OriginalFilename;
+            
+            return TypedResults.Stream(stream, contentType, fileName);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            var errorResponse = ContractMapping.MapToErrorResponse("Document not found or access denied", 404);
+            return TypedResults.NotFound(errorResponse);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error streaming document {DocumentId}", id);
             return TypedResults.Problem("Internal server error", statusCode: 500);
         }
     }
